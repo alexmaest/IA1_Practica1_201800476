@@ -38,24 +38,19 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    @PostMapping("/add")
-    public String add(@RequestBody Student student) {
-        studentService.saveStudent(student);
-        return null;
-    }
-
-    @GetMapping("/getAll")
-    public String getAllStudents() throws IOException {
-
+    @PostMapping("/")
+    public String getAllStudents(@RequestBody String jsonBody) throws IOException {
+        System.out.println("JSON recibido: " + jsonBody);
+        
+        System.out.println("Entraaa");
         String filePath = "C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\image_06.jpg";
         String filePath2 = "C:\\Users\\alexm\\Downloads\\ALEXIS";
-        //System.setProperty("GOOGLE_APPLICATION_CREDENTIALS", "C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\noble-return-414922-694655a1d0f6.json");
         com.google.cloud.storage.Storage storage = StorageOptions.newBuilder()
                 .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream("C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\noble-return-414922-694655a1d0f6.json")))
                 .build()
                 .getService();
-        generateImageWithBoundingBoxes(filePath, filePath2);
-        return detectSafeSearch(filePath);
+        //generateImageWithBoundingBoxes(filePath, filePath2);
+        return "{\"data\" : \"detectSafeSearch(filePath)\"}";
     }
 
     public static List<LabelData> detectLabels(String filePath) throws IOException {
