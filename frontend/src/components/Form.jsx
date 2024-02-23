@@ -33,10 +33,9 @@ const Form = () => {
         if (response.ok) {
            console.log("Imagen enviada exitosamente.");
           const responseBodyJson = await response.json();
-          console.log(responseBodyJson);
           history.push({
             pathname: '/results',
-            state: { responseBodyJson } // Pasar responseBodyJson como parte del estado de la ubicación
+            state: { responseBodyJson }
           });
           window.location.reload();
         } else {
@@ -74,7 +73,7 @@ const Form = () => {
               <img
                 src={URL.createObjectURL(selectedFile)}
                 alt="Preview"
-                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "10px" }}
+                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "80px" }}
               />
             ) : (
               "Cargar imagen"

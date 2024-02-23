@@ -23,6 +23,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import javax.imageio.ImageIO;
 
 @RestController
 @RequestMapping("/data")
@@ -66,13 +68,13 @@ public class StudentController {
                 .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream("C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\noble-return-414922-694655a1d0f6.json")))
                 .build()
                 .getService();
-        //generateImageWithBoundingBoxes(filePath, filePath2);
         
         List<LabelData> labels = detectLabels(byteString);
         int faces_number = detectFaces(byteString);
+        String imageDetectedFaces = generateImageWithBoundingBoxes(byteString);
         
-        
-        DataList data = new DataList(faces_number, labels);
+        DataList data = new DataList(faces_number, imageDetectedFaces, labels);
+
         return data;
     }
 
@@ -138,7 +140,7 @@ public class StudentController {
         return faceCount;
     }
 
-    public static void generateImageWithBoundingBoxes(ByteString imgBytes) throws IOException {
+    public static String generateImageWithBoundingBoxes(ByteString imgBytes) {
         List<AnnotateImageRequest> requests = new ArrayList<>();
         Image img = Image.newBuilder().setContent(imgBytes).build();
         Feature feat = Feature.newBuilder().setType(Feature.Type.FACE_DETECTION).build();
@@ -152,19 +154,17 @@ public class StudentController {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
             List<AnnotateImageResponse> responses = response.getResponsesList();
 
-            // Load original image
-            BufferedImage originalImage = javax.imageio.ImageIO.read(new FileInputStream(inputImagePath));
+            BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(imgBytes.toByteArray()));
             Graphics2D g2d = originalImage.createGraphics();
-            g2d.setStroke(new BasicStroke(3)); // Width of the bounding box lines
+            g2d.setStroke(new BasicStroke(3));
 
             for (AnnotateImageResponse res : responses) {
                 if (res.hasError()) {
                     System.err.println("Error: " + res.getError().getMessage());
-                    return;
+                    return null;
                 }
 
                 for (FaceAnnotation annotation : res.getFaceAnnotationsList()) {
-                    // Get bounding box vertices
                     List<Vertex> vertices = annotation.getBoundingPoly().getVerticesList();
                     int[] xPoints = new int[vertices.size()];
                     int[] yPoints = new int[vertices.size()];
@@ -173,17 +173,21 @@ public class StudentController {
                         yPoints[i] = vertices.get(i).getY();
                     }
 
-                    // Draw bounding box
-                    g2d.setColor(Color.GREEN); // Set bounding box color
+                    g2d.setColor(Color.GREEN);
                     g2d.drawPolygon(xPoints, yPoints, vertices.size());
                 }
             }
 
-            // Save the modified image with bounding boxes
-            javax.imageio.ImageIO.write(originalImage, "jpg", new java.io.File(outputImagePath + "\\image_alpha.jpg"));
-            g2d.dispose();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            ImageIO.write(originalImage, "jpg", baos);
+            baos.flush();
+            byte[] imageInByte = baos.toByteArray();
+            baos.close();
+
+            return java.util.Base64.getEncoder().encodeToString(imageInByte);
         } catch (Exception ex) {
             System.out.println(ex);
+            return null;
         }
     }
 
@@ -249,6 +253,10 @@ public class StudentController {
 
         public List<LabelData> getLabels() {
             return labels;
+        }
+        
+        public String getImageDetectedFaces() {
+            return imageDetectedFaces;
         }
         
         public int getFacesNumber() {
