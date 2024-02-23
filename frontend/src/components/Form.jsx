@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { useHistory } from 'react-router-dom'; // Importa useHistory
+import { useHistory } from 'react-router-dom';
 
 const API = 'http://localhost:8080';
 
 const Form = () => {
   const [selectedFile, setSelectedFile] = useState(null);
-  const history = useHistory(); // Usa el hook useHistory en lugar de withRouter
+  const history = useHistory();
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];

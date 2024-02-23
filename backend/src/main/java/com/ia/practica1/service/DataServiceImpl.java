@@ -8,27 +8,27 @@ package com.ia.practica1.service;
  *
  * @author alexm
  */
-import com.ia.practica1.model.Student;
-import com.ia.practica1.repository.StudentRepository;
+import com.ia.practica1.model.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import com.ia.practica1.repository.DataRepository;
 
 @Service
-public class StudentServiceImpl implements StudentService{
+public class DataServiceImpl implements DataService{
 
     @Autowired(required = false)
-    private StudentRepository studentRepository;
+    private DataRepository dataRepository;
 
     @Override
-    public Student saveStudent(Student student) {
-        return studentRepository.save(student);
+    public Data saveData(Data student) {
+        return dataRepository.save(student);
     }
 
     @Override
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
+    public List<Data> getAllData() {
+        return dataRepository.findAll();
     }
 
 }

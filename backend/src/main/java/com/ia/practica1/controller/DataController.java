@@ -17,22 +17,16 @@ import com.google.cloud.vision.v1.ImageAnnotatorClient;
 import com.google.cloud.vision.v1.SafeSearchAnnotation;
 import com.google.cloud.vision.v1.Vertex;
 import com.google.protobuf.ByteString;
-import com.ia.practica1.model.Student;
-import com.ia.practica1.service.StudentService;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import java.util.Base64;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -40,26 +34,10 @@ import javax.imageio.ImageIO;
 @RestController
 @RequestMapping("/data")
 @CrossOrigin
-public class StudentController {
-
-    @Autowired
-    private StudentService studentService;
-
-    private static byte[] readImageData(String imagePath) throws IOException {
-        File file = new File(imagePath);
-        FileInputStream fis = new FileInputStream(file);
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        int bytesRead;
-        while ((bytesRead = fis.read(buffer)) != -1) {
-            bos.write(buffer, 0, bytesRead);
-        }
-        fis.close();
-        return bos.toByteArray();
-    }
+public class DataController {
 
     @PostMapping("/")
-    public DataList getAllStudents(@RequestBody String jsonBody) throws IOException {
+    public DataList getAllData(@RequestBody String jsonBody) throws IOException {
         String imageDataString = jsonBody;
         byte[] imageData = Base64.getDecoder().decode(imageDataString);
         ByteString byteString = ByteString.copyFrom(imageData);
@@ -72,8 +50,8 @@ public class StudentController {
         List<LabelData> labels = detectLabels(byteString);
         int faces_number = detectFaces(byteString);
         String imageDetectedFaces = generateImageWithBoundingBoxes(byteString);
-        
-        DataList data = new DataList(faces_number, imageDetectedFaces, labels);
+        Sensitive sensitive = detectSafeSearch(byteString);
+        DataList data = new DataList(faces_number, imageDetectedFaces, labels, sensitive);
 
         return data;
     }
@@ -191,9 +169,9 @@ public class StudentController {
         }
     }
 
-    public static String detectSafeSearch(String filePath) throws IOException {
+    public static Sensitive detectSafeSearch(ByteString imgBytes) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
-        ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
+
         Image img = Image.newBuilder().setContent(imgBytes).build();
         Feature feat = Feature.newBuilder().setType(Feature.Type.SAFE_SEARCH_DETECTION).build();
         AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
@@ -205,20 +183,26 @@ public class StudentController {
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
             List<AnnotateImageResponse> responses = response.getResponsesList();
-
+    
             for (AnnotateImageResponse res : responses) {
                 if (res.hasError()) {
                     System.err.println("Error: " + res.getError().getMessage());
                     return null;
                 }
-                System.out.println(res.getSafeSearchAnnotation());
-                return "";
+                SafeSearchAnnotation safeSearchAnnotation = res.getSafeSearchAnnotation();
+                Sensitive sensitive = new Sensitive(
+                    safeSearchAnnotation.getAdult().name(),
+                    safeSearchAnnotation.getSpoof().name(),
+                    safeSearchAnnotation.getMedical().name(),
+                    safeSearchAnnotation.getViolence().name(),
+                    safeSearchAnnotation.getRacy().name()
+                );
+                return sensitive;
             }
         }
         return null;
     }
     
-    // Clase auxiliar para almacenar las etiquetas
     static class LabelData {
 
         private String description;
@@ -237,18 +221,56 @@ public class StudentController {
             return score;
         }
     }
+    
+    static class Sensitive {
 
-    // Clase auxiliar para representar la lista de etiquetas
+        private String adult;
+        private String spoof;
+        private String medical;
+        private String violence;
+        private String racy;
+
+        public Sensitive(String adult, String spoof, String medical, String violence, String racy) {
+            this.adult = adult;
+            this.spoof = spoof;
+            this.medical = medical;
+            this.violence = violence;
+            this.racy = racy;
+        }
+
+        public String getAdult() {
+            return adult;
+        }
+
+        public String getSpoof() {
+            return spoof;
+        }
+        
+        public String getMedical() {
+            return medical;
+        }
+        
+        public String getViolence() {
+            return violence;
+        }
+        
+        public String getRacy() {
+            return racy;
+        }
+    }
+
     static class DataList {
 
         private int faces = 0;
         private String imageDetectedFaces;
         private List<LabelData> labels;
+        private Sensitive sensitive;
 
-        public DataList(int faces, String imageDetectedFaces, List<LabelData> labels) {
+        public DataList(int faces, String imageDetectedFaces, List<LabelData> labels, Sensitive sensitive) {
             this.faces = faces;
             this.imageDetectedFaces = imageDetectedFaces;
             this.labels = labels;
+            this.sensitive = sensitive;
         }
 
         public List<LabelData> getLabels() {
@@ -261,6 +283,10 @@ public class StudentController {
         
         public int getFacesNumber() {
             return faces;
+        }
+        
+        public Sensitive getSensitive() {
+            return sensitive;
         }
     }
     

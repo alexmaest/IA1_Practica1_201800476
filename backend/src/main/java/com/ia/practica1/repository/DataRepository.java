@@ -4,10 +4,10 @@
  */
 package com.ia.practica1.repository;
 
-import com.ia.practica1.model.Student;
+import com.ia.practica1.model.Data;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface StudentRepository extends JpaRepository<Student,Integer> {
+public interface DataRepository extends JpaRepository<Data,Integer> {
 
 
 }

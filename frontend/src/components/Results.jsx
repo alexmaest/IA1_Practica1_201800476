@@ -9,6 +9,8 @@ const Results = () => {
     var labels = responseBodyJson['labels'];
     var facesNumber = responseBodyJson['facesNumber'];
     var imageDetectedFaces = responseBodyJson['imageDetectedFaces'];
+    var sensitive = responseBodyJson['sensitive'];
+    console.log(sensitive);
     const history = useHistory();
 
     const metodoSubmit = async () => {
@@ -19,6 +21,23 @@ const Results = () => {
         window.location.reload();
     };
 
+    const getColor = (value) => {
+        switch (value) {
+            case "VERY_UNLIKELY":
+                return "#f76d6d";
+            case "UNLIKELY":
+                return "#f7b36f";
+            case "POSSIBLE":
+                return "#f0d560";
+            case "LIKELY":
+                return "#c9f56c";
+            case "VERY_LIKELY":
+                return "#75f760";
+            default:
+                return "#000000";
+        }
+    };
+
     return (
         <div>
             <div style={{ paddingTop: "5%", paddingLeft: "40%", paddingRight: "20%", textAlign: "center", width: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -26,39 +45,47 @@ const Results = () => {
                 <h1 style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", paddingTop: "5%" }}>Resultados</h1>
             </div>
 
-            <p style={{ textAlign: "center", height: "20vh", display: "flex", justifyContent: "center", alignItems: "center" }} class="lead">Cantidad de rostros detectados: {facesNumber}</p>
+            <p style={{ textAlign: "center", height: "20vh", display: "flex", justifyContent: "center", alignItems: "center" }} className="lead">Cantidad de rostros detectados: {facesNumber}</p>
 
             <div style={{ textAlign: "center", height: "40vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <div
-                    style={{
-                        width: "40vw",
-                        height: "50vh",
-                        borderRadius: "80px",
-                        overflow: "hidden",
-                        position: "relative",
-                        boxShadow: "0 10px 20px rgba(0, 0, 0, 0.2)"
-                    }}
-                >
-                    <img
-                        src={`data:image/jpeg;base64,${imageDetectedFaces}`}
-                        alt="Detected Faces"
-                        style={{
-                            width: "40vw",
-                            height: "50vh",
-                            backgroundColor: "#d9e3f1",
-                            borderRadius: "80px",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            fontSize: "22px",
-                            color: "#485785",
-                            boxShadow: "0 80px 80px rgba(0, 0, 0, 0.1), 0 -4px 80px rgba(255, 255, 255, 0.5)"
-                        }}
-                    />
-                </div>
+    <img
+        src={`data:image/jpeg;base64,${imageDetectedFaces}`}
+        alt="Detected Faces"
+        style={{
+            width: "40vw",
+            height: "50vh",
+            maxWidth: "100%",
+            backgroundColor: "#d9e3f1",
+            borderRadius: "80px",
+            objectFit: "cover",
+            boxShadow: "0 80px 80px rgba(0, 0, 0, 0.1), 0 -4px 80px rgba(255, 255, 255, 0.5)"
+        }}
+    />
+</div>
+
+
+            <p style={{ textAlign: "center", height: "40vh", display: "flex", justifyContent: "center", alignItems: "center" }} className="lead">Contenido sensible</p>
+
+            <div style={{ paddingLeft: "20%", paddingRight: "20%", paddingTop: "1%", textAlign: "center", height: "5vh", width: "200vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <table style={{ borderRadius: "10px", overflow: "hidden", textAlign: "center" }} className="table table-hover">
+                    <thead>
+                        <tr className="table-dark">
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Coincidencia</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Object.keys(sensitive).map((type, index) => (
+                            <tr className="table-type" key={index}>
+                                <td>{type}</td>
+                                <td style={{ backgroundColor: getColor(sensitive[type]) }}>{sensitive[type]}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             </div>
 
-            <p style={{ textAlign: "center", height: "40vh", display: "flex", justifyContent: "center", alignItems: "center" }} class="lead">Etiquetas detectadas</p>
+            <p style={{ textAlign: "center", height: "50vh", display: "flex", justifyContent: "center", alignItems: "center" }} className="lead">Etiquetas detectadas</p>
 
             <div style={{ paddingLeft: "20%", paddingRight: "20%", paddingTop: "5%", paddingBottom: "20%", textAlign: "center", height: "40vh", width: "200vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <table style={{ borderRadius: "10px", overflow: "hidden", textAlign: "center" }} className="table table-hover">
