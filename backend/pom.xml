@@ -38,15 +38,19 @@
 	 <dependency>
 	  <groupId>com.google.api.grpc</groupId>
 	  <artifactId>grpc-google-cloud-vision-v1</artifactId>
-	  <version>0.1.8</version>
+	  <version>3.33.0</version>
 	  <type>jar</type>
 	 </dependency>
 	 <dependency>
-	  <groupId>com.google.cloud</groupId>
-	  <artifactId>google-cloud-vision</artifactId>
-	  <version>2.1.4</version>
-	  <type>jar</type>
-	 </dependency>
+            <groupId>com.google.cloud</groupId>
+            <artifactId>google-cloud-vision</artifactId>
+            <version>3.34.0</version>
+        </dependency>
+         <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <version>1.16.0</version>
+        </dependency>
          <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -75,6 +79,30 @@
 	  <version>1.0.2</version>
 	  <type>jar</type>
 	 </dependency>
+	 <dependency>
+	  <groupId>com.github.jlabsys</groupId>
+	  <artifactId>object-mapper</artifactId>
+	  <version>1.1</version>
+	  <type>jar</type>
+	 </dependency>
+	 <dependency>
+	  <groupId>be.yildiz-games</groupId>
+	  <artifactId>common-mapping</artifactId>
+	  <version>1.0.7</version>
+	  <type>jar</type>
+	 </dependency>
+	 <dependency>
+	  <groupId>org.reactivecommons.utils</groupId>
+	  <artifactId>object-mapper-api</artifactId>
+	  <version>0.1.0</version>
+	  <type>jar</type>
+	 </dependency>
+	 <dependency>
+	  <groupId>com.github.lbovolini</groupId>
+	  <artifactId>ObjectMapper</artifactId>
+	  <version>0.2.3</version>
+	  <type>jar</type>
+	 </dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
@@ -94,7 +122,7 @@
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
-
+        
 	<build>
 		<plugins>
 			<plugin>

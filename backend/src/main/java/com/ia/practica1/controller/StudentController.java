@@ -29,6 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.Base64;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/data")
@@ -38,26 +43,38 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
+    private static byte[] readImageData(String imagePath) throws IOException {
+        File file = new File(imagePath);
+        FileInputStream fis = new FileInputStream(file);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int bytesRead;
+        while ((bytesRead = fis.read(buffer)) != -1) {
+            bos.write(buffer, 0, bytesRead);
+        }
+        fis.close();
+        return bos.toByteArray();
+    }
+
     @PostMapping("/")
-    public String getAllStudents(@RequestBody String jsonBody) throws IOException {
-        System.out.println("JSON recibido: " + jsonBody);
-        
-        System.out.println("Entraaa");
-        String filePath = "C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\image_06.jpg";
-        String filePath2 = "C:\\Users\\alexm\\Downloads\\ALEXIS";
+    public List<LabelData> getAllStudents(@RequestBody String jsonBody) throws IOException {
+        String imageDataString = jsonBody;
+        byte[] imageData = Base64.getDecoder().decode(imageDataString);
+        ByteString byteString = ByteString.copyFrom(imageData);
+
+        //String filePath = "C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\image_06.jpg";
+        //String filePath2 = "C:\\Users\\alexm\\Downloads\\ALEXIS";
         com.google.cloud.storage.Storage storage = StorageOptions.newBuilder()
                 .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream("C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\noble-return-414922-694655a1d0f6.json")))
                 .build()
                 .getService();
         //generateImageWithBoundingBoxes(filePath, filePath2);
-        return "{\"data\" : \"detectSafeSearch(filePath)\"}";
+        return detectLabels(byteString);
     }
 
-    public static List<LabelData> detectLabels(String filePath) throws IOException {
+    public static List<LabelData> detectLabels(ByteString imgBytes) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
-
-        ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
-
+        
         Image img = Image.newBuilder().setContent(imgBytes).build();
         Feature feat = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
         AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
@@ -65,12 +82,11 @@ public class StudentController {
                 .setImage(img)
                 .build();
         requests.add(request);
-
+        List<LabelData> labels = new ArrayList<>();
         try (ImageAnnotatorClient client = ImageAnnotatorClient.create()) {
             BatchAnnotateImagesResponse response = client.batchAnnotateImages(requests);
             List<AnnotateImageResponse> responses = response.getResponsesList();
 
-            List<LabelData> labels = new ArrayList<>();
             for (AnnotateImageResponse res : responses) {
                 if (res.hasError()) {
                     System.err.println("Error: " + res.getError().getMessage());
@@ -81,14 +97,15 @@ public class StudentController {
                     labels.add(new LabelData(description, score * 100));
                 }
             }
-
-            // Convertir la lista de etiquetas a JSON
-            return labels;
+        }catch(Exception e){
+            System.out.println(e);
         }
+        return labels;
     }
 
     // Clase auxiliar para almacenar las etiquetas
     static class LabelData {
+
         private String description;
         private float score;
 
@@ -108,6 +125,7 @@ public class StudentController {
 
     // Clase auxiliar para representar la lista de etiquetas
     static class LabelsList {
+
         private List<LabelData> labels;
 
         public LabelsList(List<LabelData> labels) {
@@ -119,12 +137,10 @@ public class StudentController {
         }
     }
 
-    public static int detectFaces(String filePath) throws IOException {
+    public static int detectFaces(ByteString filePath) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
-        ByteString imgBytes = ByteString.readFrom(new FileInputStream(filePath));
-
-        Image img = Image.newBuilder().setContent(imgBytes).build();
+        Image img = Image.newBuilder().setContent(filePath).build();
         Feature feat = Feature.newBuilder().setType(Feature.Type.FACE_DETECTION).build();
         AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
                 .addFeatures(feat)
@@ -151,7 +167,7 @@ public class StudentController {
         }
         return faceCount;
     }
-    
+
     public static void generateImageWithBoundingBoxes(String inputImagePath, String outputImagePath) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
         ByteString imgBytes = ByteString.readFrom(new FileInputStream(inputImagePath));
