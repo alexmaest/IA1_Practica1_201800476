@@ -57,19 +57,23 @@ public class StudentController {
     }
 
     @PostMapping("/")
-    public List<LabelData> getAllStudents(@RequestBody String jsonBody) throws IOException {
+    public DataList getAllStudents(@RequestBody String jsonBody) throws IOException {
         String imageDataString = jsonBody;
         byte[] imageData = Base64.getDecoder().decode(imageDataString);
         ByteString byteString = ByteString.copyFrom(imageData);
 
-        //String filePath = "C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\image_06.jpg";
-        //String filePath2 = "C:\\Users\\alexm\\Downloads\\ALEXIS";
         com.google.cloud.storage.Storage storage = StorageOptions.newBuilder()
                 .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream("C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\noble-return-414922-694655a1d0f6.json")))
                 .build()
                 .getService();
         //generateImageWithBoundingBoxes(filePath, filePath2);
-        return detectLabels(byteString);
+        
+        List<LabelData> labels = detectLabels(byteString);
+        int faces_number = detectFaces(byteString);
+        
+        
+        DataList data = new DataList(faces_number, labels);
+        return data;
     }
 
     public static List<LabelData> detectLabels(ByteString imgBytes) throws IOException {
@@ -103,44 +107,10 @@ public class StudentController {
         return labels;
     }
 
-    // Clase auxiliar para almacenar las etiquetas
-    static class LabelData {
-
-        private String description;
-        private float score;
-
-        public LabelData(String description, float score) {
-            this.description = description;
-            this.score = score;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public float getScore() {
-            return score;
-        }
-    }
-
-    // Clase auxiliar para representar la lista de etiquetas
-    static class LabelsList {
-
-        private List<LabelData> labels;
-
-        public LabelsList(List<LabelData> labels) {
-            this.labels = labels;
-        }
-
-        public List<LabelData> getLabels() {
-            return labels;
-        }
-    }
-
-    public static int detectFaces(ByteString filePath) throws IOException {
+    public static int detectFaces(ByteString imgBytes) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
 
-        Image img = Image.newBuilder().setContent(filePath).build();
+        Image img = Image.newBuilder().setContent(imgBytes).build();
         Feature feat = Feature.newBuilder().setType(Feature.Type.FACE_DETECTION).build();
         AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
                 .addFeatures(feat)
@@ -168,9 +138,8 @@ public class StudentController {
         return faceCount;
     }
 
-    public static void generateImageWithBoundingBoxes(String inputImagePath, String outputImagePath) throws IOException {
+    public static void generateImageWithBoundingBoxes(ByteString imgBytes) throws IOException {
         List<AnnotateImageRequest> requests = new ArrayList<>();
-        ByteString imgBytes = ByteString.readFrom(new FileInputStream(inputImagePath));
         Image img = Image.newBuilder().setContent(imgBytes).build();
         Feature feat = Feature.newBuilder().setType(Feature.Type.FACE_DETECTION).build();
         AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
@@ -244,4 +213,47 @@ public class StudentController {
         }
         return null;
     }
+    
+    // Clase auxiliar para almacenar las etiquetas
+    static class LabelData {
+
+        private String description;
+        private float score;
+
+        public LabelData(String description, float score) {
+            this.description = description;
+            this.score = score;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public float getScore() {
+            return score;
+        }
+    }
+
+    // Clase auxiliar para representar la lista de etiquetas
+    static class DataList {
+
+        private int faces = 0;
+        private String imageDetectedFaces;
+        private List<LabelData> labels;
+
+        public DataList(int faces, String imageDetectedFaces, List<LabelData> labels) {
+            this.faces = faces;
+            this.imageDetectedFaces = imageDetectedFaces;
+            this.labels = labels;
+        }
+
+        public List<LabelData> getLabels() {
+            return labels;
+        }
+        
+        public int getFacesNumber() {
+            return faces;
+        }
+    }
+    
 }
