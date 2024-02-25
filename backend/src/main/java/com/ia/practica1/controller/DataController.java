@@ -4,29 +4,32 @@
  */
 package com.ia.practica1.controller;
 
-import com.google.auth.oauth2.ServiceAccountCredentials;
-import com.google.cloud.storage.StorageOptions;
-import com.google.cloud.vision.v1.AnnotateImageRequest;
-import com.google.cloud.vision.v1.AnnotateImageResponse;
+import org.springframework.web.bind.annotation.*;
 import com.google.cloud.vision.v1.BatchAnnotateImagesResponse;
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.vision.v1.AnnotateImageResponse;
+import com.google.cloud.vision.v1.SafeSearchAnnotation;
+import com.google.cloud.vision.v1.ImageAnnotatorClient;
+import com.google.cloud.vision.v1.AnnotateImageRequest;
 import com.google.cloud.vision.v1.EntityAnnotation;
 import com.google.cloud.vision.v1.FaceAnnotation;
+import com.google.cloud.storage.StorageOptions;
 import com.google.cloud.vision.v1.Feature;
-import com.google.cloud.vision.v1.Image;
-import com.google.cloud.vision.v1.ImageAnnotatorClient;
-import com.google.cloud.vision.v1.SafeSearchAnnotation;
 import com.google.cloud.vision.v1.Vertex;
+import com.google.cloud.vision.v1.Image;
 import com.google.protobuf.ByteString;
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.web.bind.annotation.*;
-import java.util.Base64;
+import com.ia.practica1.model.Sensitive;
+import com.ia.practica1.model.LabelData;
+import com.ia.practica1.model.DataList;
 import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.awt.image.BufferedImage;
+import java.awt.BasicStroke;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.awt.Color;
 import java.io.FileInputStream;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -202,92 +205,4 @@ public class DataController {
         }
         return null;
     }
-    
-    static class LabelData {
-
-        private String description;
-        private float score;
-
-        public LabelData(String description, float score) {
-            this.description = description;
-            this.score = score;
-        }
-
-        public String getDescription() {
-            return description;
-        }
-
-        public float getScore() {
-            return score;
-        }
-    }
-    
-    static class Sensitive {
-
-        private String adult;
-        private String spoof;
-        private String medical;
-        private String violence;
-        private String racy;
-
-        public Sensitive(String adult, String spoof, String medical, String violence, String racy) {
-            this.adult = adult;
-            this.spoof = spoof;
-            this.medical = medical;
-            this.violence = violence;
-            this.racy = racy;
-        }
-
-        public String getAdult() {
-            return adult;
-        }
-
-        public String getSpoof() {
-            return spoof;
-        }
-        
-        public String getMedical() {
-            return medical;
-        }
-        
-        public String getViolence() {
-            return violence;
-        }
-        
-        public String getRacy() {
-            return racy;
-        }
-    }
-
-    static class DataList {
-
-        private int faces = 0;
-        private String imageDetectedFaces;
-        private List<LabelData> labels;
-        private Sensitive sensitive;
-
-        public DataList(int faces, String imageDetectedFaces, List<LabelData> labels, Sensitive sensitive) {
-            this.faces = faces;
-            this.imageDetectedFaces = imageDetectedFaces;
-            this.labels = labels;
-            this.sensitive = sensitive;
-        }
-
-        public List<LabelData> getLabels() {
-            return labels;
-        }
-        
-        public String getImageDetectedFaces() {
-            return imageDetectedFaces;
-        }
-        
-        public int getFacesNumber() {
-            return faces;
-        }
-        
-        public Sensitive getSensitive() {
-            return sensitive;
-        }
-    }
-    
 }

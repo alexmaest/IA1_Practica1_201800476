@@ -10,7 +10,6 @@ const Results = () => {
     var facesNumber = responseBodyJson['facesNumber'];
     var imageDetectedFaces = responseBodyJson['imageDetectedFaces'];
     var sensitive = responseBodyJson['sensitive'];
-    console.log(sensitive);
     const history = useHistory();
 
     const metodoSubmit = async () => {
@@ -38,6 +37,23 @@ const Results = () => {
         }
     };
 
+    const getBlur = (value) => {
+        switch (value) {
+            case "VERY_UNLIKELY":
+                return "blur(0px)";
+            case "UNLIKELY":
+                return "blur(4px)";
+            case "POSSIBLE":
+                return "blur(6px)";
+            case "LIKELY":
+                return "blur(8px)";
+            case "VERY_LIKELY":
+                return "blur(10px)";
+            default:
+                return "blur(0px)";
+        }
+    };
+
     return (
         <div>
             <div style={{ paddingTop: "5%", paddingLeft: "40%", paddingRight: "20%", textAlign: "center", width: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -45,29 +61,75 @@ const Results = () => {
                 <h1 style={{ textAlign: "center", display: "flex", justifyContent: "center", alignItems: "center", paddingTop: "5%" }}>Resultados</h1>
             </div>
 
-            <p style={{ textAlign: "center", height: "20vh", display: "flex", justifyContent: "center", alignItems: "center" }} className="lead">Cantidad de rostros detectados: {facesNumber}</p>
+            <div style={{ marginLeft: "300px", marginRight: "300px", textAlign: "center", maxWidth: "100vw", height: "80vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <div style={{ marginRight: "10%", textAlign: "center", maxWidth: "100%", height: "40vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                    <img
+                        src={`data:image/jpeg;base64,${imageDetectedFaces}`}
+                        alt="Detected Faces"
+                        style={{
+                            width: "180vw",
+                            height: "50vh",
+                            maxWidth: "100%",
+                            backgroundColor: "#d9e3f1",
+                            borderRadius: "80px",
+                            objectFit: "cover",
+                            boxShadow: "0 80px 80px rgba(0, 0, 0, 0.1), 0 -4px 80px rgba(255, 255, 255, 0.5)",
+                            filter: getBlur(sensitive['violence'])
+                        }}
+                    />
+                </div>
+                <div style={{ maxWidth: "100%", height: "50vh", width: "80vw" }}>
+                    <p style={{
+                        height: "100%",
+                        backgroundColor: "#d9e3f1",
+                        borderRadius: "80px",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        fontSize: "20px",
+                        color: "#485785",
+                        font: "small-caption",
+                        boxShadow: "0 80px 80px rgba(0, 0, 0, 0.1), 0 -4px 80px rgba(255, 255, 255, 0.5)"
+                    }} className="lead">
+                        <span>Cantidad de rostros detectados</span>
+                        <span style={{ paddingTop: "5%", fontSize: "64px" }}>{facesNumber}</span>
+                    </p>
+                </div>
+            </div>
 
-            <div style={{ textAlign: "center", height: "40vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-    <img
-        src={`data:image/jpeg;base64,${imageDetectedFaces}`}
-        alt="Detected Faces"
-        style={{
-            width: "40vw",
-            height: "50vh",
-            maxWidth: "100%",
-            backgroundColor: "#d9e3f1",
-            borderRadius: "80px",
-            objectFit: "cover",
-            boxShadow: "0 80px 80px rgba(0, 0, 0, 0.1), 0 -4px 80px rgba(255, 255, 255, 0.5)"
-        }}
-    />
-</div>
+            <div style={{ marginLeft: "300px", marginRight: "300px", textAlign: "center", maxWidth: "100vw", height: "5vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <p style={{ textAlign: "center", height: "1vh", display: "flex", justifyContent: "center", alignItems: "center" }} className="lead">Etiquetas detectadas</p>
+                <p style={{ marginLeft: "40%",  textAlign: "center", height: "40vh", display: "flex", justifyContent: "center", alignItems: "center" }} className="lead">Contenido sensible</p>
+            </div>
 
-
-            <p style={{ textAlign: "center", height: "40vh", display: "flex", justifyContent: "center", alignItems: "center" }} className="lead">Contenido sensible</p>
-
-            <div style={{ paddingLeft: "20%", paddingRight: "20%", paddingTop: "1%", textAlign: "center", height: "5vh", width: "200vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <table style={{ borderRadius: "10px", overflow: "hidden", textAlign: "center" }} className="table table-hover">
+            <div style={{ marginLeft: "300px", marginRight: "300px", marginBottom: "10%", textAlign: "center", maxWidth: "100vw", height: "60vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
+                <div style={{ marginRight: "10%", maxWidth: "100%", height: "50vh", width: "100vw", borderRadius: "50px", boxShadow: "0 80px 80px rgba(0, 0, 0, 0.1), 0 -4px 80px rgba(255, 255, 255, 0.5)" }}>
+                    <table style={{ overflow: "hidden", textAlign: "center", borderRadius: "30px" }} className="table table-hover">
+                        <thead>
+                            <tr className="table-dark">
+                                <th scope="col">Etiqueta</th>
+                                <th scope="col">Porcentaje (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {labels.map((item, index) => (
+                                <tr className="table-type" key={index}>
+                                    <td>{item.description}</td>
+                                    <td>
+                                        <div style={{ width: "100%", backgroundColor: "#ddd", borderRadius: "10px", textAlign: "center" }}>
+                                            <div style={{ width: `${item.score}%`, backgroundColor: "#75f760", borderRadius: "10px", color: "white" }}>
+                                                {item.score}%
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div style={{ marginLeft: "5%", maxWidth: "100%", height: "50vh", width: "100vw", borderRadius: "50px", boxShadow: "0 80px 80px rgba(0, 0, 0, 0.1), 0 -4px 80px rgba(255, 255, 255, 0.5)" }}>
+                <table style={{ overflow: "hidden", textAlign: "center", borderRadius: "30px" }} className="table table-hover">
                     <thead>
                         <tr className="table-dark">
                             <th scope="col">Tipo</th>
@@ -78,32 +140,12 @@ const Results = () => {
                         {Object.keys(sensitive).map((type, index) => (
                             <tr className="table-type" key={index}>
                                 <td>{type}</td>
-                                <td style={{ backgroundColor: getColor(sensitive[type]) }}>{sensitive[type]}</td>
+                                <td style={{ height:"9.2vh", backgroundColor: getColor(sensitive[type]) }}>{sensitive[type]}</td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-            </div>
-
-            <p style={{ textAlign: "center", height: "50vh", display: "flex", justifyContent: "center", alignItems: "center" }} className="lead">Etiquetas detectadas</p>
-
-            <div style={{ paddingLeft: "20%", paddingRight: "20%", paddingTop: "5%", paddingBottom: "20%", textAlign: "center", height: "40vh", width: "200vh", display: "flex", justifyContent: "center", alignItems: "center" }}>
-                <table style={{ borderRadius: "10px", overflow: "hidden", textAlign: "center" }} className="table table-hover">
-                    <thead>
-                        <tr className="table-dark">
-                            <th scope="col">Etiqueta</th>
-                            <th scope="col">Porcentaje (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {labels.map((item, index) => (
-                            <tr className="table-type" key={index}>
-                                <td>{item.description}</td>
-                                <td>{item.score}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                </div>
             </div>
         </div>
     );

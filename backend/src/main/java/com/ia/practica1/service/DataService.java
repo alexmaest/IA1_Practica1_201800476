@@ -8,10 +8,7 @@ package com.ia.practica1.service;
  *
  * @author alexm
  */
-import com.ia.practica1.model.Data;
-import java.util.List;
 
 public interface DataService {
-    public Data saveData(Data student);
-    public List<Data> getAllData();
+    
 }
