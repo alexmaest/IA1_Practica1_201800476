@@ -160,7 +160,7 @@ public class DataController {
             }
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(originalImage, "jpg", baos);
+            ImageIO.write(originalImage, "png", baos);
             baos.flush();
             byte[] imageInByte = baos.toByteArray();
             baos.close();
