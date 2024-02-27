@@ -23,15 +23,16 @@ import com.ia.practica1.model.LabelData;
 import com.ia.practica1.model.DataList;
 import java.io.ByteArrayOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.File;
 import java.awt.image.BufferedImage;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.awt.Color;
-import java.io.FileInputStream;
-import java.io.IOException;
 import javax.imageio.ImageIO;
 
 @RestController
@@ -45,8 +46,9 @@ public class DataController {
         byte[] imageData = Base64.getDecoder().decode(imageDataString);
         ByteString byteString = ByteString.copyFrom(imageData);
 
+        String path = new File("src/main/java/com/ia/practica1/noble.json").getAbsolutePath();
         com.google.cloud.storage.Storage storage = StorageOptions.newBuilder()
-                .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream("C:\\Users\\alexm\\OneDrive\\Documentos\\NetBeansProjects\\project1\\src\\main\\java\\com\\mycompany\\project1\\noble-return-414922-694655a1d0f6.json")))
+                .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream(path)))
                 .build()
                 .getService();
         

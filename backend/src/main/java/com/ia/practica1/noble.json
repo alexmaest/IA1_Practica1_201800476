@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "noble-return-414922",
+  "private_key_id": "694655a1d0f639fdbbb33a82cbd197b01d1e2185",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCq43L1aA1IM1As\nIZBoeNCRaakqTHkDz2pYGLszGplrindE0V0wKEynXx+eUB9CLgvI06DhrLykmZ/w\nGEIhue/o0ruG+RHoUBgVJFX9UAzmRD8PnHQJZIFb/51R3poU79//ZX0UsHvWKoon\n/lEJMgzPMj10Pe2ZOahSGtwvdcZz8OKo0kGhR06LIiu25H1yvdak2xONDqJHfmyJ\nEv0+1IAIb5pptHEMSbH/uBm0BbbHm+kFAlsptN2cUt0iQC4OVgMCKlQgCU0SJ8GU\n9C9FW/3yEqYENT+nXwQ+ybFWkf6acJOy/5gveIy0zW5fJVmTqmRoalH3DKNSmdjv\ngMGy6/blAgMBAAECggEAC0nfofT37aVQHj4wXSpf8r8lWOE43EbTGlM16IwRBvDc\nbJwc+Q2sdKD8xHc7/WHvztomBkpkIsZwMYrUsYgoIDvtfd7Nr0g9MwZVtNhZJcvr\n04LtCmLMhdCGqq4XBRuMc0FXyCpZX94rBrXO0hnvjS9fLmLZ43WS2CukkHEKBUYQ\ncv4UaafOgAPQwozQL0ALbQuk8mfpubvMJ1NiZhibkq/NtebpMFUPoijzQV32dSXv\no7mBtV4/U+1V+nDIIKGXVSN6H487SjSrUVss73Je6vZuN3khOrALYEMPXtHtEd4n\n8sfc4TJFmIcPhBBl1DTONXg1UqKn7ReAYjq5v/EcAQKBgQDcc7aBpOL6c0raX1Tq\nNsf/L+jghTC3lxDI1YU6nHtRxYfJaH2PbXdS4mxI844JbFG4d7yN8Lt4kH6aKCNu\n1iKDi927BVCqSFWIKHCQmf7rPkz4tCN5BQ+8VTsxMiWCKDxU1TTbsZwW7qfF+OOx\nefQXl7pdOG+OiVmSnB+1acBMAQKBgQDGcb9JcMvcTQqz2aX499sDuiCLhQ8Xsfqp\nptaGRpL5DdsnQJjuw1YP3RaDKnMp9RIORmS/K9HeI7lNgETVuYLmgH7+P6Szyu6u\nNZhX5SmTl3is+nvoM90A2KnMFykYoKtCyaONKtCwrpaZPUSTQ8q0sennTRhPW25m\nTYS8W6/65QKBgEo4xzy0+BqckJofOKa2lPVs+voEvddCDEuh3/5QyxBH8iS0gnm0\nwFTumMii/7JaftUdsyUS5Pt9orJiSzO48tvZTmj2LCd4vRtfii6VOoeXbTDa7YqE\nUrz08T3qBUjiJRXmxqolDUmHRoNX/ck2JyF+WyehpaWWxsqet+pLVYwBAoGAJd1k\na4X7UCDfLuwTsErS3oYwWY7dD19lfeOYwWxL9PvA2l+IDt701/gOqJ579QCPHmwu\nIxAgbmuQmwojmEhagtL36FmKesf4/QK6++J9KW1YmGD/LZJf1B6DX673p3xY0Via\nPYBy65OUps66/AKOdiYQhJMAVXwTt6+I6Uvxa0UCgYAjNCUp51WcTDo5RZzgiL1v\nZa60uQyqo35tFi8VZEA06lpT5EFQ8KPXHO+2B6HSOPjvNVkCyyQuFtlBV7csqIsW\nivgkDRNgsB3agjUSE+CIKIMua4/SUxjNDSI73QDBQtMp0q5/05Ibjk6q1z4RvEn8\nLeyvfSX5ZAhr2P4PUqhQxA==\n-----END PRIVATE KEY-----\n",
+  "client_email": "practica1cloudvision@noble-return-414922.iam.gserviceaccount.com",
+  "client_id": "112616508996356698427",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/practica1cloudvision%40noble-return-414922.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
